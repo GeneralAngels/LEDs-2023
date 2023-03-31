@@ -6,41 +6,6 @@ from typing import List
 from leds.color import Color, Representation
 
 
-class LEDSim:
-    def __init__(self, master: tk.Tk, x: int, y: int, size: float,
-                 color: Color = Color.from_rgb(0, 0, 0)) -> None:
-        self.master = master
-
-        self.canvas = tk.Canvas(master, width=100, height=100)
-        self.canvas.pack()
-
-        self.x = x
-        self.y = y
-
-        self.size = size
-
-        self.color = color
-
-    def set_color(self, color: Color) -> None:
-        self.color = color
-
-    def get_color(self, representation: Representation) -> Color:
-        match representation:
-            case Representation.RGB:
-                return self.color.to_rgb()
-            case Representation.HSV:
-                return self.color.to_hsv()
-            case _:
-                raise ValueError("Unknown representation")
-
-    def draw(self) -> None:
-        self.canvas.create_rectangle(self.x, self.y,
-                                     self.x + self.size, self.y + self.size,
-                                     fill=f"#{self.color.values[0]:02x}\
-                                             {self.color.values[1]:02x}\
-                                             {self.color.values [2]:02x}")
-
-
 class LEDStripSim(Thread):
     def __init__(self, length: int) -> None:
         super().__init__()
@@ -100,3 +65,37 @@ class LEDStripSim(Thread):
 
     def suppress(self) -> None:
         self.set_all(Color.from_rgb(0, 0, 0))
+
+class LEDSim:
+    def __init__(self, master: tk.Tk, x: int, y: int, size: float,
+                 color: Color = Color.from_rgb(0, 0, 0)) -> None:
+        self.master = master
+
+        self.canvas = tk.Canvas(master, width=100, height=100)
+        self.canvas.pack()
+
+        self.x = x
+        self.y = y
+
+        self.size = size
+
+        self.color = color
+
+    def set_color(self, color: Color) -> None:
+        self.color = color
+
+    def get_color(self, representation: Representation) -> Color:
+        match representation:
+            case Representation.RGB:
+                return self.color.to_rgb()
+            case Representation.HSV:
+                return self.color.to_hsv()
+            case _:
+                raise ValueError("Unknown representation")
+
+    def draw(self) -> None:
+        self.canvas.create_rectangle(self.x, self.y,
+                                     self.x + self.size, self.y + self.size,
+                                     fill=f"#{self.color.values[0]:02x}\
+                                             {self.color.values[1]:02x}\
+                                             {self.color.values [2]:02x}")
