@@ -6,7 +6,7 @@ from leds import Color, PatternScheduler, LEDStrip, PatternSupplier
 
 from strip_sim import LEDStripSim
 
-LED_COUNT = 129
+LED_COUNT = 130
 
 
 def main():
@@ -18,6 +18,7 @@ def main():
     # scheduler.set_pattern(Compass(LED_COUNT, 10, PatternSupplier(lambda: pos)))
     # scheduler.set_default_pattern(Blink(LED_COUNT, 10, 0.5, Color.from_rgb(255, 0, 0)))
     scheduler.set_default_pattern(Breathing(LED_COUNT, 10, Color.from_rgb(0, 0, 255), Color.from_rgb(0, 0, 0), 8, 2))
+    scheduler.set_pattern(Blink(LED_COUNT, 10, 0.5, Color.from_hsv(180, 1, 1)))
     scheduler.start()
     strip.mainloop()
 

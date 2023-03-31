@@ -1,5 +1,4 @@
-import tkinter as tk
-from threading import Thread
+import pygame
 
 from typing import List
 
@@ -10,50 +9,51 @@ class LEDStripSim():
     def __init__(self, length: int) -> None:
         self.length = length
 
-        self.master = tk.Tk()
-
-        self.master.title("LED Strip Simulator")
-
         self.window_width = 100
         self.window_height = 100
 
-        self.master.geometry(f"{self.window_width}x{self.window_height}")
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
 
-        self.canvas = tk.Canvas(self.master, bg="black")
-
-        self.canvas.pack(fill=tk.BOTH, expand=True)
+        pygame.display.set_caption("LED Strip Simulator")
 
         self.led_size = 10
 
-        self.leds: List[LEDSim] = [LEDSim(self.canvas, 0, 0, self.led_size) for _ in range(self.length)]
+        self.leds: List[LEDSim] = [LEDSim(self.screen, 0, 0, self.led_size) for _ in range(self.length)]
 
         self.reformat_leds()
 
-        self.master.bind("<Configure>", self.on_resize)
-
     def mainloop(self) -> None:
-        self.master.mainloop()
+        while True:
+            self.screen.fill((0, 0, 0))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+                elif event.type == pygame.VIDEORESIZE:
+                    self.on_resize(event)
+
+            self.update()
+
+            pygame.display.update()
 
     def on_resize(self, event) -> None:
-        self.canvas.config(width=event.width, height=event.height)
-        self.window_width = event.width
-        self.window_height = event.height
-        self.canvas.create_rectangle(0, 0, self.window_width, self.window_height, fill="black")
+        self.window_width, self.window_height = event.dict['size']
         self.reformat_leds()
 
     def reformat_leds(self) -> None:
-        leds_per_row = int(self.window_width / self.led_size)
-        leds_per_column = int(self.length / leds_per_row)
+        leds_per_row = int(self.window_width / self.led_size) if self.led_size > 0 else 1
+        leds_per_column = int(self.length / leds_per_row) if leds_per_row > 0 else self.length
         extra_leds = self.length - leds_per_row * leds_per_column
 
         for j in range(leds_per_column):
             for i in range(leds_per_row):
-                self.leds[i + j * leds_per_row].x = i * self.led_size
-                self.leds[i + j * leds_per_row].y = j * self.led_size
+                self.leds[i + j * leds_per_row].x = i * self.led_size + self.led_size//2
+                self.leds[i + j * leds_per_row].y = j * self.led_size + self.led_size//2
 
         for i in range(extra_leds):
-            self.leds[i + leds_per_row * leds_per_column].x = i * self.led_size
-            self.leds[i + leds_per_row * leds_per_column].y = leds_per_column * self.led_size
+            self.leds[i + leds_per_row * leds_per_column].x = i * self.led_size + self.led_size//2
+            self.leds[i + leds_per_row * leds_per_column].y = leds_per_column * self.led_size + self.led_size//2
 
     def set_color(self, i: int, color: Color) -> None:
         self.leds[i].set_color(color)
@@ -73,11 +73,9 @@ class LEDStripSim():
         self.set_all(Color.from_rgb(0, 0, 0))
 
 class LEDSim:
-    def __init__(self, canvas: tk.Canvas, x: int, y: int, size: float,
+    def __init__(self, screen: pygame.display, x: int, y: int, size: float,
                  color: Color = Color.from_rgb(0, 0, 0)) -> None:
-        self.canvas = canvas
-
-        self.canvas.pack()
+        self.screen = screen
 
         self.x = x
         self.y = y
@@ -99,6 +97,4 @@ class LEDSim:
                 raise ValueError("Unknown representation")
 
     def draw(self) -> None:
-        self.canvas.create_rectangle(self.x - self.size//2, self.y - self.size//2,
-                                     self.x + self.size//2, self.y + self.size//2,
-                                     fill=f"#{self.color.values[0]:02x}{self.color.values[1]:02x}{self.color.values [2]:02x}")
+        pygame.draw.rect(self.screen, self.color.to_rgb().values, (self.x - self.size//2, self.y - self.size//2, self.size - 1, self.size - 1))

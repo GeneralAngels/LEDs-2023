@@ -35,13 +35,13 @@ class Color:
         if self.representation == Representation.RGB:
             return self
         elif self.representation == Representation.HSV:
-            return self.hsv_to_rgb(self.values)
+            return Color.hsv_to_rgb(self)
         else:
             raise ValueError("Unknown representation")
 
     def to_hsv(self) -> Color:
         if self.representation == Representation.RGB:
-            return self.rgb_to_hsv(self.values)
+            return Color.rgb_to_hsv(self)
         elif self.representation == Representation.HSV:
             return self
         else:
@@ -50,7 +50,7 @@ class Color:
     @staticmethod
     def hsv_to_rgb(hsv: Color) -> Color:
         # calculate values of RGB
-        h, s, v = hsv.h, hsv.s, hsv.v
+        h, s, v = hsv.values
 
         if s == 0:
             r, g, b = v, v, v

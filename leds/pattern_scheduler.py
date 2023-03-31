@@ -31,7 +31,7 @@ class PatternScheduler(Thread):
                     self.strip.suppress()
 
             self.strip.update()
-            # time.sleep(max(0, self.update_time - (time.time() - start)))
+            time.sleep(max(0, self.update_time - (time.time() - start)))
 
     def set_pattern(self, pattern: Pattern) -> None:
         pattern.insert_strip(self.strip)
