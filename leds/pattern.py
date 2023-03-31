@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 import time
 
+from typing import Callable
+
 from leds.strip import LEDStrip
 
 
@@ -29,3 +31,7 @@ class Pattern(ABC):
 
     def is_finished(self) -> bool:
         return time.time() - self.start_time >= self.duration
+
+
+def PatternSupplier(func: Callable[[], object]) -> Callable[[], object]:
+    return lambda: func()
