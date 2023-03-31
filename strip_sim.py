@@ -6,38 +6,44 @@ from typing import List
 from leds.color import Color, Representation
 
 
-class LEDStripSim(Thread):
+class LEDStripSim():
     def __init__(self, length: int) -> None:
-        super().__init__()
-
         self.length = length
 
         self.master = tk.Tk()
 
-        self.leds: List[LEDSim] = [None for _ in range(self.length)]
-
-        self.led_size = 10
+        self.master.title("LED Strip Simulator")
 
         self.window_width = 100
         self.window_height = 100
 
+        self.master.geometry(f"{self.window_width}x{self.window_height}")
+
+        self.canvas = tk.Canvas(self.master, bg="black")
+
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+
+        self.led_size = 10
+
+        self.leds: List[LEDSim] = [LEDSim(self.canvas, 0, 0, self.led_size) for _ in range(self.length)]
+
+        self.reformat_leds()
+
         self.master.bind("<Configure>", self.on_resize)
 
-    def begin(self) -> None:
-        self.start()
-
-    def run(self) -> None:
+    def mainloop(self) -> None:
         self.master.mainloop()
 
     def on_resize(self, event) -> None:
         self.canvas.config(width=event.width, height=event.height)
         self.window_width = event.width
         self.window_height = event.height
+        self.canvas.create_rectangle(0, 0, self.window_width, self.window_height, fill="black")
         self.reformat_leds()
 
     def reformat_leds(self) -> None:
         leds_per_row = int(self.window_width / self.led_size)
-        leds_per_column = int(self.window_height / self.led_size)
+        leds_per_column = int(self.length / leds_per_row)
         extra_leds = self.length - leds_per_row * leds_per_column
 
         for j in range(leds_per_column):
@@ -67,11 +73,10 @@ class LEDStripSim(Thread):
         self.set_all(Color.from_rgb(0, 0, 0))
 
 class LEDSim:
-    def __init__(self, master: tk.Tk, x: int, y: int, size: float,
+    def __init__(self, canvas: tk.Canvas, x: int, y: int, size: float,
                  color: Color = Color.from_rgb(0, 0, 0)) -> None:
-        self.master = master
+        self.canvas = canvas
 
-        self.canvas = tk.Canvas(master, width=100, height=100)
         self.canvas.pack()
 
         self.x = x
@@ -94,8 +99,6 @@ class LEDSim:
                 raise ValueError("Unknown representation")
 
     def draw(self) -> None:
-        self.canvas.create_rectangle(self.x, self.y,
-                                     self.x + self.size, self.y + self.size,
-                                     fill=f"#{self.color.values[0]:02x}\
-                                             {self.color.values[1]:02x}\
-                                             {self.color.values [2]:02x}")
+        self.canvas.create_rectangle(self.x - self.size//2, self.y - self.size//2,
+                                     self.x + self.size//2, self.y + self.size//2,
+                                     fill=f"#{self.color.values[0]:02x}{self.color.values[1]:02x}{self.color.values [2]:02x}")
