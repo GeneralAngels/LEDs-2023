@@ -10,6 +10,8 @@ class LEDStrip:
 
         self.strip = PixelStrip(self.length, self.pin)
 
+
+    def begin(self) -> None:
         self.strip.begin()
 
     def set_color(self, i: int, color: Color) -> None:
@@ -29,7 +31,7 @@ class LEDStrip:
         else:
             raise ValueError("Unknown representation")
 
-    def show(self):
+    def update(self):
         self.strip.show()
 
     def suppress(self):

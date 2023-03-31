@@ -30,7 +30,7 @@ class PatternScheduler(Thread):
                 else:
                     self.strip.suppress()
 
-            self.strip.show()
+            self.strip.update()
             time.sleep(max(0, self.update_time - (time.time() - start)))
 
     def set_pattern(self, pattern: Pattern) -> None:
