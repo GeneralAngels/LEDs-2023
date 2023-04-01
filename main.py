@@ -20,20 +20,19 @@ def inc_color(color: Color):
 
 
 def main():
-    current_color = Color.from_hsv(0, 1, 1)
     # strip = LEDStrip(12, LED_COUNT)
     strip = LEDStripSim(LED_COUNT)
     scheduler = PatternScheduler(strip)
     # scheduler.set_default_pattern(Blink(LED_COUNT, 10, 0.5, Color.from_rgb(255, 0, 0)))
-    # scheduler.set_default_pattern(Breathing(LED_COUNT, 10, Color.from_rgb(0, 0, 255), Color.from_rgb(0, 0, 0), 8, 2))
+    scheduler.set_default_pattern(Breathing(LED_COUNT, 10, Color.from_rgb(0, 0, 255), Color.from_rgb(0, 0, 0), 8, 2))
     # scheduler.set_pattern(Blink(LED_COUNT, 10, 0.5, Color.from_hsv(180, 1, 100)))
-    scheduler.set_default_pattern(RemoteRainbow(LED_COUNT, 10, PatternSupplier(lambda: current_color)))
+    # scheduler.set_default_pattern(RemoteRainbow(LED_COUNT, 10, PatternSupplier(lambda: current_color)))
     # scheduler.set_default_pattern(Rainbow(LED_COUNT, 10, 2))
     scheduler.start()
 
-    rainbow_thread = Thread(target=inc_color, args=(current_color,))
+    # rainbow_thread = Thread(target=inc_color, args=(current_color,))
 
-    rainbow_thread.start()
+    # rainbow_thread.start()
 
     strip.mainloop()
 

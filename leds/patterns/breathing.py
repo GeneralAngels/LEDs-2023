@@ -14,27 +14,27 @@ class Breathing(Pattern):
         self.breath_time = breath_time
         self.interval = interval
 
-        self.clock = time()
+        self.start_time = time()
 
-    def start(self):
-        self.clock = time()
+    def init(self):
+        self.start_time = time()
 
     def update(self) -> None:
-        if time() - self.clock < self.breath_time / 2:
-            t = (time() - self.clock) / (self.breath_time / 2)
+        if time() - self.start_time < self.breath_time / 2:
+            t = (time() - self.start_time) / (self.breath_time / 2)
             self.strip.set_all(Color.lerp(
                 self.exhale_color,
                 self.inhale_color,
                 t
             ))
-        elif time() - self.clock < self.breath_time:
-            t = (time() - self.clock - self.breath_time / 2) / (self.breath_time / 2)
+        elif time() - self.start_time < self.breath_time:
+            t = (time() - self.start_time - self.breath_time / 2) / (self.breath_time / 2)
             self.strip.set_all(Color.lerp(
                 self.inhale_color,
                 self.exhale_color,
                 t
             ))
-        elif time() - self.clock < self.breath_time + self.interval:
+        elif time() - self.start_time < self.breath_time + self.interval:
             self.strip.set_all(self.exhale_color)
         else:
-            self.clock = time()
+            self.start_time = time()

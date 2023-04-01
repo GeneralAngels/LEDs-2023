@@ -14,7 +14,7 @@ class Blink(Pattern):
 
         self.clock = time()
 
-    def start(self):
+    def init(self):
         self.clock = time()
 
     def update(self) -> None:

@@ -16,8 +16,6 @@ class Pattern(ABC):
         self.strip_length = strip_length
         self.duration = duration
 
-        self.start_time = time.time()
-
     def insert_strip(self, strip: LEDStrip) -> None:
         """
         Inserts the LED strip into the pattern.
